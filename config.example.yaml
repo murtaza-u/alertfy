@@ -4,3 +4,6 @@ hook:
     enable: false
     username: "bob"
     password: "tryguessingthis"
+  log:
+    level: "info" # possible values: "debug", "info", "warn", "error"
+    format: "text" # possible values: "text", "json"

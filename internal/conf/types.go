@@ -8,10 +8,16 @@ type C struct {
 type hook struct {
 	ListenAddr string `koan:"listenAddr"`
 	Auth       auth   `koan:"auth"`
+	Log        log    `koan:"log"`
 }
 
 type auth struct {
 	Enable   bool   `koan:"enable"`
 	Username string `koan:"username"`
 	Password string `koan:"password"`
+}
+
+type log struct {
+	Level  string `koan:"level"`
+	Format string `koan:"format"`
 }

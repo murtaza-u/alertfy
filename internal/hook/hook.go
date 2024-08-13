@@ -1,6 +1,8 @@
 package hook
 
 import (
+	"log/slog"
+
 	"github.com/murtaza-u/amify/internal/conf"
 
 	"github.com/labstack/echo/v4"
@@ -22,6 +24,9 @@ func New(c conf.C) (*Hook, error) {
 // Listen starts the webhook API server.
 func (h Hook) Listen() error {
 	e := echo.New()
+
+	// configure logger
+	slog.SetDefault(h.logger())
 
 	// setup basic auth middleware, if enabled
 	if h.conf.Hook.Auth.Enable {
