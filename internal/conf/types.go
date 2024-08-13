@@ -11,6 +11,7 @@ type hook struct {
 }
 
 type auth struct {
+	Enable   bool   `koan:"enable"`
 	Username string `koan:"username"`
 	Password string `koan:"password"`
 }
