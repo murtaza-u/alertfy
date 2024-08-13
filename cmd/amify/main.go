@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/murtaza-u/amify/internal/conf"
+	"github.com/murtaza-u/amify/internal/hook"
 )
 
 func main() {
@@ -12,5 +13,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(conf)
+
+	hook, err := hook.New(*conf)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = hook.Listen()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

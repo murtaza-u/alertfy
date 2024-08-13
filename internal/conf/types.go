@@ -1,15 +1,16 @@
 package conf
 
-type Config struct {
-	Hook Hook `koanf:"hook"`
+// C contains all the configuration data that can be passed to the webhook.
+type C struct {
+	Hook hook `koanf:"hook"`
 }
 
-type Hook struct {
+type hook struct {
 	ListenAddr string `koan:"listenAddr"`
-	Auth       Auth   `koan:"auth"`
+	Auth       auth   `koan:"auth"`
 }
 
-type Auth struct {
+type auth struct {
 	Username string `koan:"username"`
 	Password string `koan:"password"`
 }

@@ -21,7 +21,7 @@ var (
 // New creates a configuration using the provided arguments, environment
 // variables, and config file. The order of precedence for configuration values
 // is: flag arguments > environment variables > config file.
-func New(args ...string) (*Config, error) {
+func New(args ...string) (*C, error) {
 	k := koanf.New(".")
 
 	f := parseFlags(args)
@@ -50,7 +50,7 @@ func New(args ...string) (*Config, error) {
 		return nil, fmt.Errorf("failed to load post flags: %w", err)
 	}
 
-	conf := new(Config)
+	conf := new(C)
 	err = k.Unmarshal("", conf)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal configuration: %w", err)
