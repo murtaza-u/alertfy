@@ -5,5 +5,29 @@ hook:
     username: "bob"
     password: "tryguessingthis"
   log:
-    level: "info" # possible values: "debug", "info", "warn", "error"
+    level: "info"  # possible values: "debug", "info", "warn", "error"
     format: "text" # possible values: "text", "json"
+ntfy:
+  baseUrl: https://ntfy.sh
+  auth:
+    enable: false
+    username: "mark"
+    password: "nowtryguessingthis"
+  notification:
+    # Topic can either be a hardcoded string or a gval expression
+    # that evaluates to a string
+    topic: "alertmanager"
+    # Priority reference: https://docs.ntfy.sh/publish/#message-priority
+    # Can either be a hardcoded string or a gval expression that
+    # evaluates to a string
+    priority: |
+      status == "firing" ? "urgent" : "default"
+    # Tags with no condition are always included
+    # Emoji shortcode reference: https://docs.ntfy.sh/emojis/
+    tags:
+      - tag: "rotating_light,construction"
+        condition: |
+          status == "firing"
+      - tag: "white_check_mark,confetti_ball"
+        condition: |
+          status == "resolved"
