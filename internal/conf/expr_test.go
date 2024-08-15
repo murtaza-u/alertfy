@@ -10,9 +10,14 @@ import (
 )
 
 type Params struct {
-	X int
-	Y bool
-	Z string
+	X   int
+	Y   bool
+	Z   string
+	Foo foo
+}
+
+type foo struct {
+	Bar string
 }
 
 type Input struct {
@@ -68,7 +73,7 @@ func TestExpression(t *testing.T) {
 }
 
 func TestStringExpression(t *testing.T) {
-	params := Params{X: 10, Y: false, Z: "foo"}
+	params := Params{X: 10, Y: false, Z: "foo", Foo: foo{Bar: "bar"}}
 	inputs := []Input{
 		{
 			Typ:    "string",
@@ -83,6 +88,11 @@ func TestStringExpression(t *testing.T) {
 		{
 			Typ:    "string",
 			Expr:   `Z == "foo" ? "bar" : "blah"`,
+			Output: "bar",
+		},
+		{
+			Typ:    "string",
+			Expr:   `Foo.Bar`,
 			Output: "bar",
 		},
 	}
