@@ -8,7 +8,6 @@ import (
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
-	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
 	flag "github.com/spf13/pflag"
 )
@@ -45,11 +44,6 @@ func New(args ...string) (*C, error) {
 		return nil, fmt.Errorf("failed to load env variables: %w", err)
 	}
 
-	err = k.Load(posflag.Provider(f, ".", k), nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load post flags: %w", err)
-	}
-
 	conf := new(C)
 	err = k.Unmarshal("", conf)
 	if err != nil {
@@ -66,9 +60,6 @@ func parseFlags(args []string) *flag.FlagSet {
 		os.Exit(0)
 	}
 	f.String("conf", defaultConfig, "path to config file")
-	f.String("hook.listenAddr", defaultListenAddr, "address for the hook to listen on")
-	f.String("hook.auth.username", "", "http basic auth username")
-	f.String("hook.auth.password", "", "http basic auth password")
 	f.Parse(args)
 	return f
 }
