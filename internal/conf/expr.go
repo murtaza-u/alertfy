@@ -3,11 +3,14 @@ package conf
 import (
 	"fmt"
 	"strings"
+	"text/template"
 	"unicode"
 
 	"github.com/PaesslerAG/gval"
 )
 
+// Expr consists of an evaluable gval expression. It implements the
+// encoding.TextUnmarshaler interface.
 type Expr struct {
 	Text      string
 	Evaluable gval.Evaluable
@@ -27,6 +30,9 @@ func (e *Expr) UnmarshalText(text []byte) error {
 	return nil
 }
 
+// StringExpr consists of an expression that can either be evaluated to a
+// string or an evaluable. It implements the encoding.TextUnmarshaler
+// interface.
 type StringExpr struct {
 	Text string
 	Expr *Expr
@@ -59,5 +65,26 @@ func (se *StringExpr) UnmarshalText(text []byte) error {
 	}
 	se.Expr = &expr
 
+	return nil
+}
+
+// Template consists of a parsed text template that can be executed at runtime.
+// It implements the encoding.TextUnmarshaler interface.
+type Template struct {
+	template.Template
+}
+
+func (t *Template) UnmarshalText(text []byte) error {
+	if text == nil {
+		return nil
+	}
+
+	s := strings.TrimSpace(string(text))
+	tmpl, err := template.New("").Parse(s)
+	if err != nil {
+		return fmt.Errorf("failed to parse template `%s`: %w", s, err)
+	}
+
+	t.Template = *tmpl
 	return nil
 }

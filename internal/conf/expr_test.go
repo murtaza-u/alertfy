@@ -1,6 +1,7 @@
 package conf_test
 
 import (
+	"bytes"
 	"context"
 	"testing"
 
@@ -14,21 +15,27 @@ type Params struct {
 	Y   bool
 	Z   string
 	Foo foo
+	Bar map[string]string
 }
 
 type foo struct {
 	Bar string
 }
 
-type Input struct {
+type InputExpr struct {
 	Typ    string
 	Expr   string
 	Output any
 }
 
+type InputTemplate struct {
+	Template string
+	Output   string
+}
+
 func TestExpression(t *testing.T) {
 	params := Params{X: 10, Y: false, Z: "foo"}
-	inputs := []Input{
+	inputs := []InputExpr{
 		{
 			Typ:    "bool",
 			Expr:   `X == 10`,
@@ -74,7 +81,7 @@ func TestExpression(t *testing.T) {
 
 func TestStringExpression(t *testing.T) {
 	params := Params{X: 10, Y: false, Z: "foo", Foo: foo{Bar: "bar"}}
-	inputs := []Input{
+	inputs := []InputExpr{
 		{
 			Typ:    "string",
 			Expr:   `foobar`,
@@ -131,6 +138,53 @@ func TestStringExpression(t *testing.T) {
 		isNil = assert.Nilf(t, err, "evaluating expression: `%s`", i.Expr)
 		if isNil {
 			assert.Equalf(t, i.Output, out, "expression: `%s`", i.Expr)
+		}
+	}
+}
+
+func TestTemplate(t *testing.T) {
+	params := Params{
+		X:   10,
+		Y:   false,
+		Z:   "foo",
+		Foo: foo{Bar: "bar"},
+		Bar: map[string]string{
+			"a": "b",
+		},
+	}
+	inputs := []InputTemplate{
+		{
+			Template: `
+			{{- if eq .X 10 -}}
+				It is 10
+			{{- else -}}
+				It is something else
+			{{- end -}}
+			`,
+			Output: "It is 10",
+		},
+		{
+			Template: `{{ index .Bar "a" }}`,
+			Output:   "b",
+		},
+		{
+			Template: `{{ index .Bar "c" }}`,
+			Output:   "",
+		},
+	}
+	for idx, i := range inputs {
+		var tmpl conf.Template
+		err := tmpl.UnmarshalText([]byte(i.Template))
+		isNil := assert.Nilf(t, err, "unmarshalling template: %d", idx)
+		if !isNil {
+			continue
+		}
+
+		buf := new(bytes.Buffer)
+		err = tmpl.Execute(buf, params)
+		isNil = assert.Nilf(t, err, "evaluating template: %d", idx)
+		if isNil {
+			assert.Equalf(t, i.Output, buf.String(), "template: %d", idx)
 		}
 	}
 }
