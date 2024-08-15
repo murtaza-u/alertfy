@@ -30,9 +30,11 @@ type log struct {
 }
 
 type notification struct {
-	Topic    StringExpr `koanf:"topic"`
-	Priority StringExpr `koanf:"priority"`
-	Tags     []tag      `koanf:"tags"`
+	Topic       StringExpr `koanf:"topic"`
+	Priority    StringExpr `koanf:"priority"`
+	Tags        []tag      `koanf:"tags"`
+	Title       Template   `koanf:"title"`
+	Description Template   `koanf:"description"`
 }
 
 type tag struct {

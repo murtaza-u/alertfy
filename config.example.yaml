@@ -21,13 +21,17 @@ ntfy:
     # Can either be a hardcoded string or a gval expression that
     # evaluates to a string
     priority: |
-      status == "firing" ? "urgent" : "default"
+      Status == "firing" ? "urgent" : "default"
     # Tags with no condition are always included
     # Emoji shortcode reference: https://docs.ntfy.sh/emojis/
     tags:
       - tag: "rotating_light,construction"
         condition: |
-          status == "firing"
+          Status == "firing"
       - tag: "white_check_mark,confetti_ball"
         condition: |
-          status == "resolved"
+          Status == "resolved"
+    title: |
+        {{ if eq .Status "resolved" }}Resolved: {{ end }}{{ index .Annotations "summary" }}
+    description: |
+        {{ index .Annotations "description" }}
