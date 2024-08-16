@@ -2,6 +2,7 @@ package hook
 
 import (
 	"log/slog"
+	"time"
 
 	"github.com/murtaza-u/amify/internal/conf"
 
@@ -11,13 +12,15 @@ import (
 
 // Hook represents a webhook object.
 type Hook struct {
-	conf conf.C
+	conf      conf.C
+	startedAt time.Time
 }
 
 // New initializes a webhook object with the provided configuration.
 func New(c conf.C) (*Hook, error) {
 	return &Hook{
-		conf: c,
+		conf:      c,
+		startedAt: time.Now(),
 	}, nil
 }
 
@@ -29,10 +32,12 @@ func (h Hook) Listen() error {
 	slog.SetDefault(h.logger())
 
 	// setup basic auth middleware, if enabled
+	var middlewares []echo.MiddlewareFunc
 	if h.conf.Hook.Auth.Enable {
-		e.Use(middleware.BasicAuth(h.basicAuth))
+		middlewares = append(middlewares, middleware.BasicAuth(h.basicAuth))
 	}
 
-	e.POST("/hook", h.serve)
+	e.POST("/hook", h.serve, middlewares...)
+	e.GET("/health", h.health)
 	return e.Start(h.conf.Hook.ListenAddr)
 }
