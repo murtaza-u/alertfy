@@ -2,16 +2,12 @@ package conf
 
 import (
 	"fmt"
-	"net"
 	"net/url"
 )
 
 // Validate validates the provided configuration.
 func (c C) Validate() error {
 	// hook
-	if err := validateListenAddr(c.Hook.ListenAddr); err != nil {
-		return fmt.Errorf("invalid `hook.listenAddr`: %q", c.Hook.ListenAddr)
-	}
 	if err := validateAuth(c.Hook.Auth); err != nil {
 		return fmt.Errorf("`hook.auth`: %w", err)
 	}
@@ -40,27 +36,6 @@ func (c C) Validate() error {
 	}
 	if c.Ntfy.Notification.Description == nil {
 		return fmt.Errorf("`ntfy.notification.description` cannot be empty")
-	}
-
-	return nil
-}
-
-func validateListenAddr(addr string) error {
-	host, port, err := net.SplitHostPort(addr)
-	if err != nil {
-		return err
-	}
-
-	// validate the host part
-	if host != "" {
-		if ip := net.ParseIP(host); ip == nil {
-			return fmt.Errorf("invalid ip address: %q", host)
-		}
-	}
-
-	// validate the port part
-	if _, err := net.LookupPort("tcp", port); err != nil {
-		return fmt.Errorf("invalid port %q: %w", port, err)
 	}
 
 	return nil

@@ -26,7 +26,6 @@ func New(args ...string) (*C, error) {
 	k := koanf.New(".")
 
 	err := k.Load(confmap.Provider(map[string]any{
-		"hook.listenAddr":               ":8080",
 		"hook.auth.enable":              false,
 		"hook.auth.username":            "",
 		"hook.auth.password":            "",

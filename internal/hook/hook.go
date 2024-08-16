@@ -16,6 +16,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+const port = ":5748"
+
 // Hook represents a webhook object.
 type Hook struct {
 	conf      conf.C
@@ -53,7 +55,7 @@ func (h Hook) Listen() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err := e.Start(h.conf.Hook.ListenAddr)
+		err := e.Start(port)
 		if err != nil {
 			if errors.Is(err, http.ErrServerClosed) {
 				slog.Log(context.Background(), slog.LevelInfo, "shutting down")

@@ -6,28 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateListenAddr(t *testing.T) {
-	a := assert.New(t)
-	inputs := map[string]bool{
-		":8080":                true,
-		"127.0.0.1:8080":       true,
-		"0.0.0.0:8080":         true,
-		"127.0.0.1":            false,
-		"localhost:8080":       false,
-		"foo:8080":             false,
-		":70000":               false,
-		"300.300.300.300:8080": false,
-	}
-	for input, isValid := range inputs {
-		err := validateListenAddr(input)
-		if isValid {
-			a.NoErrorf(err, "INPUT=%s", input)
-			continue
-		}
-		a.Errorf(err, "INPUT=%s", input)
-	}
-}
-
 func TestValidateAuth(t *testing.T) {
 	type input struct {
 		enable   bool

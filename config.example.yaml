@@ -1,5 +1,4 @@
 hook:
-  listenAddr: ":8080"
   auth:
     enable: false
     username: "bob"

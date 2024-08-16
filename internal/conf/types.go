@@ -12,10 +12,6 @@ type C struct {
 
 // Hook contains all configuration related to the webhook.
 type Hook struct {
-	// ListenAddr is the address the webhook should listen on.
-	//
-	// Default: ":8080"
-	ListenAddr string `koanf:"listenAddr"`
 	// Auth contains the configuration for securing the webhook endpoint with
 	// HTTP basic authentication.
 	Auth Auth `koanf:"auth"`
