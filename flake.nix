@@ -17,7 +17,7 @@
             pname = "amify";
             version = version;
             src = ./.;
-            vendorHash = "sha256-9lBaOuTU2tp/lcaE7unsCGQHXn1SBRcBbiygUIWWoJw=";
+            vendorHash = "sha256-D8x1xSSyEgJprRpenB/peI6C1YsrG0pQSDmklW4BIKc=";
             CGO_ENABLED = 0;
             subPackages = [ "cmd/amify" ];
           };
