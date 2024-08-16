@@ -3,26 +3,18 @@ package hook
 import (
 	"log/slog"
 	"net/http"
-	"time"
+
+	"github.com/murtaza-u/amify/internal/alert"
+	"github.com/murtaza-u/amify/internal/ntfy"
 
 	"github.com/labstack/echo/v4"
 )
 
 type request struct {
-	Receiver    string  `json:"receiver"`
-	Status      string  `json:"status"`
-	Alerts      []alert `json:"alerts"`
-	ExternalURL string  `json:"externalURL"`
-}
-
-type alert struct {
-	Status       string            `json:"status"`
-	Labels       map[string]string `json:"labels"`
-	Annotations  map[string]string `json:"annotations"`
-	StartsAt     time.Time         `json:"startsAt"`
-	EndsAt       time.Time         `json:"endsAt"`
-	GeneratorURL string            `json:"generatorURL"`
-	Fingerprint  string            `json:"fingerprint"`
+	Receiver    string        `json:"receiver"`
+	Status      string        `json:"status"`
+	Alerts      []alert.Alert `json:"alerts"`
+	ExternalURL string        `json:"externalURL"`
 }
 
 func (h Hook) serve(c echo.Context) error {
@@ -63,7 +55,60 @@ func (h Hook) serve(c echo.Context) error {
 			slog.String("labels", formatLabels(alert.Labels)),
 			slog.String("annotations", formatLabels(alert.Annotations)),
 		)
+
+		err := h.forwardAlert(c, alert)
+		if err != nil {
+			return err
+		}
 	}
 
 	return c.NoContent(http.StatusAccepted)
+}
+
+func (h Hook) forwardAlert(c echo.Context, alert alert.Alert) error {
+	p := ntfy.NewParser(h.conf.Ntfy)
+	data := p.Parse(c.Request().Context(), alert)
+	if data == nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	req, err := ntfy.NewRequest(c.Request().Context(), ntfy.RequestData{
+		Notification: *data,
+		BasicAuth:    h.conf.Ntfy.Auth,
+	})
+	if err != nil {
+		slog.LogAttrs(
+			c.Request().Context(),
+			slog.LevelError,
+			"failed to create http request. Aborting",
+			slog.String("fingerprint", alert.Fingerprint),
+			slog.String("error", err.Error()),
+		)
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		slog.LogAttrs(
+			c.Request().Context(),
+			slog.LevelError,
+			"failed to forward request to ntfy server. Aborting",
+			slog.String("fingerprint", alert.Fingerprint),
+			slog.String("error", err.Error()),
+		)
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		slog.LogAttrs(
+			c.Request().Context(),
+			slog.LevelError,
+			"non-2XX status code received from ntfy server. Aborting",
+			slog.String("fingerprint", alert.Fingerprint),
+			slog.String("status", resp.Status),
+		)
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	return nil
 }
