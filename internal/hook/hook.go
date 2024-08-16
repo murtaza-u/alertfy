@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/murtaza-u/amify/internal/conf"
@@ -48,7 +49,8 @@ func (h Hook) Listen() {
 	e.POST("/hook", h.serve, middlewares...)
 	e.GET("/health", h.health)
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx := context.Background()
+	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	var wg sync.WaitGroup
