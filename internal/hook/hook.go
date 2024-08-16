@@ -1,7 +1,13 @@
 package hook
 
 import (
+	"context"
+	"errors"
 	"log/slog"
+	"net/http"
+	"os"
+	"os/signal"
+	"sync"
 	"time"
 
 	"github.com/murtaza-u/amify/internal/conf"
@@ -25,7 +31,7 @@ func New(c conf.C) (*Hook, error) {
 }
 
 // Listen starts the webhook API server.
-func (h Hook) Listen() error {
+func (h Hook) Listen() {
 	e := echo.New()
 
 	// configure logger
@@ -39,5 +45,47 @@ func (h Hook) Listen() error {
 
 	e.POST("/hook", h.serve, middlewares...)
 	e.GET("/health", h.health)
-	return e.Start(h.conf.Hook.ListenAddr)
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := e.Start(h.conf.Hook.ListenAddr)
+		if err != nil {
+			if errors.Is(err, http.ErrServerClosed) {
+				slog.Log(context.Background(), slog.LevelInfo, "shutting down")
+				return
+			}
+			slog.LogAttrs(
+				context.Background(),
+				slog.LevelError,
+				"server terminated",
+				slog.String("error", err.Error()),
+			)
+			stop()
+		}
+	}()
+
+	// interrupt received
+	<-ctx.Done()
+
+	// graceful termination
+	ctx, cancel := context.WithCancel(context.Background())
+	if h.conf.Hook.TerminationGracePeriod != 0 {
+		ctx, cancel = context.WithTimeout(ctx, h.conf.Hook.TerminationGracePeriod)
+	}
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		slog.LogAttrs(
+			ctx,
+			slog.LevelError,
+			"forcefully shutting down",
+			slog.String("error", err.Error()),
+		)
+	}
+
+	wg.Wait()
 }

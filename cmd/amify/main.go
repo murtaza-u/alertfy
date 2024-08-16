@@ -13,14 +13,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	hook, err := hook.New(*conf)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	err = hook.Listen()
-	if err != nil {
-		log.Fatal(err)
-	}
+	hook.Listen()
 }

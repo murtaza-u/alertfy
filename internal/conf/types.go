@@ -1,5 +1,7 @@
 package conf
 
+import "time"
+
 // C contains all configuration data that can be passed to the webhook.
 type C struct {
 	// Hook contains the webhook configuration.
@@ -19,6 +21,12 @@ type Hook struct {
 	Auth Auth `koanf:"auth"`
 	// Log contains the configuration for the log format and level.
 	Log Log `koanf:"log"`
+	// TerminationGracePeriod is the period after which the webhook must
+	// be forcefully terminated. A value of 0 implies no forceful
+	// termination.
+	//
+	// Default: 60s
+	TerminationGracePeriod time.Duration `koanf:"terminationGracePeriod"`
 }
 
 // Ntfy contains all configuration related to ntfy.

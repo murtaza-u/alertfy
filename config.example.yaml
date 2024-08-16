@@ -7,6 +7,9 @@ hook:
   log:
     level: "info"  # possible values: "debug", "info", "warn", "error"
     format: "text" # possible values: "text", "json"
+  # sets the period after which the webhook must be forcefully terminated. A
+  # value of 0 implies no forceful termination.
+  terminationGracePeriod: 60s
 ntfy:
   baseUrl: https://ntfy.sh
   auth:
