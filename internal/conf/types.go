@@ -92,9 +92,9 @@ type Notification struct {
 	// Emoji shortcode reference: https://docs.ntfy.sh/emojis/
 	Tags []Tag `koanf:"tags"`
 	// Title of the notification. Required.
-	Title Template `koanf:"title"`
+	Title *Template `koanf:"title"`
 	// Description of the notification. Required.
-	Description Template `koanf:"description"`
+	Description *Template `koanf:"description"`
 }
 
 // Tag represents a tag to be included with the notification.

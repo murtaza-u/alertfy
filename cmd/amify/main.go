@@ -13,6 +13,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = conf.Validate()
+	if err != nil {
+		log.Fatalf("failed to validate provided config: %s", err.Error())
+	}
 	hook, err := hook.New(*conf)
 	if err != nil {
 		log.Fatal(err)

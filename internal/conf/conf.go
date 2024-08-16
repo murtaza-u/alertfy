@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
@@ -22,6 +24,28 @@ var (
 // is: flag arguments > environment variables > config file.
 func New(args ...string) (*C, error) {
 	k := koanf.New(".")
+
+	err := k.Load(confmap.Provider(map[string]any{
+		"hook.listenAddr":               ":8080",
+		"hook.auth.enable":              false,
+		"hook.auth.username":            "",
+		"hook.auth.password":            "",
+		"hook.log.level":                "info",
+		"hook.log.format":               "text",
+		"hook.terminationGracePeriod":   time.Second * 60,
+		"ntfy.baseUrl":                  "",
+		"ntfy.auth.enable":              false,
+		"ntfy.auth.username":            "",
+		"ntfy.auth.password":            "",
+		"ntfy.notification.topic":       StringExpr{},
+		"ntfy.notification.priority":    StringExpr{Text: "default"},
+		"ntfy.notification.tags":        []Tag{},
+		"ntfy.notification.title":       nil,
+		"ntfy.notification.description": nil,
+	}, "."), nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load default configuration: %w", err)
+	}
 
 	f := parseFlags(args)
 	confF, err := f.GetString("conf")
