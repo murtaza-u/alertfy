@@ -41,6 +41,9 @@
             go
             go-tools
             gopls
+            kubernetes-helm
+            kind
+            kubectl
           ];
         };
       });

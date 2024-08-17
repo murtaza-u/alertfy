@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-config"
+  namespace: "{{ .Release.Namespace }}"
+data:
+  config.yaml: |-
+    hook:
+      auth:
+        enable: {{ .Values.config.hook.auth.enable }}
+        username: "{{ .Values.config.hook.auth.username }}"
+        password: "{{ .Values.config.hook.auth.password }}"
+      log:
+        level: "{{ .Values.config.hook.log.level }}"
+        format: "{{ .Values.config.hook.log.format }}"
+      terminationGracePeriod: "{{ .Values.config.hook.terminationGracePeriod }}"
+    ntfy:
+      baseUrl: "{{ .Values.config.ntfy.baseUrl }}"
+      auth:
+        enable: {{ .Values.config.ntfy.auth.enable }}
+        username: "{{ .Values.config.ntfy.auth.username }}"
+        password: "{{ .Values.config.ntfy.auth.password }}"
+      notification:
+        topic: |
+          {{ .Values.config.ntfy.notification.topic }}
+        priority: |
+          {{ .Values.config.ntfy.notification.priority }}
+        tags:
+          {{- range .Values.config.ntfy.notification.tags }}
+          - tag: {{ .tag | quote }}
+            condition: |
+              {{ .condition }}
+          {{- end }}
+        title: |
+          {{ .Values.config.ntfy.notification.title }}
+        description: |
+          {{ .Values.config.ntfy.notification.description }}

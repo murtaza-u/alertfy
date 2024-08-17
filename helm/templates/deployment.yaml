@@ -1,0 +1,90 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    app.kubernetes.io/name: "{{ .Release.Name | trunc 63 | trimSuffix "-" }}"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "{{ .Release.Name | trunc 63 | trimSuffix "-" }}"
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "{{ .Release.Name | trunc 63 | trimSuffix "-" }}"
+    spec:
+      terminationGracePeriodSeconds: 90
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+      containers:
+        - name: amify
+          image: "murtazau/amify:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5748
+            initialDelaySeconds: 0
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5748
+            initialDelaySeconds: 0
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 8
+            periodSeconds: 10
+          ports:
+            - containerPort: 5748
+              name: http-amify
+          {{- if .Values.resources }}
+          resources:
+            {{- if .Values.resources.requests }}
+            requests:
+              {{- if .Values.resources.requests.memory }}
+              memory: "{{ .Values.resources.requests.memory }}"
+              {{- end }}
+              {{- if .Values.resources.requests.cpu }}
+              cpu: "{{ .Values.resources.requests.cpu }}"
+              {{- end }}
+            {{- end }}
+            {{- if .Values.resources.limits }}
+            limits:
+              {{- if .Values.resources.limits.memory }}
+              memory: "{{ .Values.resources.limits.memory }}"
+              {{- end }}
+              {{- if .Values.resources.limits.cpu }}
+              cpu: "{{ .Values.resources.limits.cpu }}"
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/amify
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: "{{ .Release.Name }}-config"
+      restartPolicy: "Always"
