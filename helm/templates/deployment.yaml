@@ -79,6 +79,12 @@ spec:
               {{- end }}
             {{- end }}
           {{- end }}
+          {{- if .Values.envSecretName }}
+          envFrom:
+            - secretRef:
+                name: "{{ .Values.envSecretName }}"
+                optional: true
+          {{- end }}
           volumeMounts:
             - name: config
               mountPath: /etc/amify
