@@ -16,7 +16,7 @@ RUN mkdir bin -p && go build -o bin/main ./cmd/alertfy
 
 FROM alpine:3.20
 LABEL maintainer="Murtaza Udaipurwala <murtaza@murtazau.xyz>"
-COPY --from=builder /alertfy/bin/main /amify/main
+COPY --from=builder /alertfy/bin/main /alertfy/main
 WORKDIR /alertfy
 RUN adduser --disabled-password --no-create-home alertfy
 USER alertfy
