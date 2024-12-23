@@ -13,26 +13,26 @@
       {
         formatter = pkgs.nixpkgs-fmt;
         packages = rec {
-          amify = pkgs.buildGoModule {
-            pname = "amify";
+          alertfy = pkgs.buildGoModule {
+            pname = "alertfy";
             version = version;
             src = ./.;
             vendorHash = "sha256-D8x1xSSyEgJprRpenB/peI6C1YsrG0pQSDmklW4BIKc=";
             CGO_ENABLED = 0;
-            subPackages = [ "cmd/amify" ];
+            subPackages = [ "cmd/alertfy" ];
           };
           dockerImage = pkgs.dockerTools.buildImage {
-            name = "murtazau/amify";
+            name = "murtazau/alertfy";
             tag = version;
             copyToRoot = with pkgs.dockerTools; [
               caCertificates
             ];
             config = {
-              Cmd = [ "${amify}/bin/ellipsis" ];
+              Cmd = [ "${alertfy}/bin/ellipsis" ];
               WorkingDir = "/data";
             };
           };
-          default = amify;
+          default = alertfy;
         };
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [

@@ -17,10 +17,10 @@ image:
 # variables from a secret. A common use case is to configure auth credentials
 # by setting the following variables in the secret:
 #
-# AMIFY_HOOK_AUTH_USERNAME
-# AMIFY_HOOK_AUTH_PASSWORD
-# AMIFY_NTFY_AUTH_USERNAME
-# AMIFY_NTFY_AUTH_PASSWORD
+# ALERTFY_HOOK_AUTH_USERNAME
+# ALERTFY_HOOK_AUTH_PASSWORD
+# ALERTFY_NTFY_AUTH_USERNAME
+# ALERTFY_NTFY_AUTH_PASSWORD
 envSecretName: ""
 
 config:

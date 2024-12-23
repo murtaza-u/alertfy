@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/murtaza-u/amify/internal/conf"
+	"github.com/murtaza-u/alertfy/internal/conf"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/murtaza-u/amify/internal/alert"
-	"github.com/murtaza-u/amify/internal/ntfy"
+	"github.com/murtaza-u/alertfy/internal/alert"
+	"github.com/murtaza-u/alertfy/internal/ntfy"
 
 	"github.com/labstack/echo/v4"
 )

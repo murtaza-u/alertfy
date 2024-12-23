@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	defaultConfig     = "/etc/amify/config.yaml"
+	defaultConfig     = "/etc/alertfy/config.yaml"
 	defaultListenAddr = ":8080"
 )
 
@@ -57,8 +57,8 @@ func New(args ...string) (*C, error) {
 		return nil, fmt.Errorf("failed to load config file: %w", err)
 	}
 
-	err = k.Load(env.Provider("AMIFY_", ".", func(s string) string {
-		s = strings.TrimPrefix(s, "AMIFY_")
+	err = k.Load(env.Provider("ALERTFY_", ".", func(s string) string {
+		s = strings.TrimPrefix(s, "ALERTFY_")
 		s = strings.ToLower(s)
 		s = strings.ReplaceAll(s, "_", ".")
 		return s

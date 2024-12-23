@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/murtaza-u/amify/internal/alert"
-	"github.com/murtaza-u/amify/internal/conf"
+	"github.com/murtaza-u/alertfy/internal/alert"
+	"github.com/murtaza-u/alertfy/internal/conf"
 )
 
 // Parser is defines a Parse method to process the alert and extract relevant

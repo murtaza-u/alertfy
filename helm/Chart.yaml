@@ -1,6 +1,6 @@
 apiVersion: v2
-name: amify
-description: Helm chart for amify
+name: alertfy
+description: Helm chart for alertfy
 
 # A chart can be either an 'application' or a 'library' chart.
 #

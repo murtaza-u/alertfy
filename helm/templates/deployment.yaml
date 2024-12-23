@@ -31,8 +31,8 @@ spec:
         runAsGroup: 1000
         runAsNonRoot: true
       containers:
-        - name: amify
-          image: "murtazau/amify:{{ .Values.image.tag }}"
+        - name: alertfy
+          image: "murtazau/alertfy:{{ .Values.image.tag }}"
           imagePullPolicy: "{{ .Values.image.pullPolicy }}"
           securityContext:
             allowPrivilegeEscalation: false
@@ -57,7 +57,7 @@ spec:
             periodSeconds: 10
           ports:
             - containerPort: 5748
-              name: http-amify
+              name: http-alertfy
           {{- if .Values.resources }}
           resources:
             {{- if .Values.resources.requests }}
@@ -87,7 +87,7 @@ spec:
           {{- end }}
           volumeMounts:
             - name: config
-              mountPath: /etc/amify
+              mountPath: /etc/alertfy
               readOnly: true
       volumes:
         - name: config

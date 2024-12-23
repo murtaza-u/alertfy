@@ -1,4 +1,4 @@
-module github.com/murtaza-u/amify
+module github.com/murtaza-u/alertfy
 
 go 1.22.5
 

@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/murtaza-u/amify/internal/conf"
-	"github.com/murtaza-u/amify/internal/hook"
+	"github.com/murtaza-u/alertfy/internal/conf"
+	"github.com/murtaza-u/alertfy/internal/hook"
 )
 
 func main() {

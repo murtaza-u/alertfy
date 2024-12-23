@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/murtaza-u/amify/internal/conf"
+	"github.com/murtaza-u/alertfy/internal/conf"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

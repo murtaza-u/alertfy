@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/murtaza-u/amify/internal/conf"
+	"github.com/murtaza-u/alertfy/internal/conf"
 )
 
 // RequestData contains the data used to create an HTTP request.

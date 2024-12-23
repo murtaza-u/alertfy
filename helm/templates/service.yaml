@@ -9,7 +9,7 @@ spec:
   selector:
     app.kubernetes.io/name: "{{ .Release.Name | trunc 63 | trimSuffix "-" }}"
   ports:
-    - name: http-amify
+    - name: http-alertfy
       protocol: TCP
       port: 80
-      targetPort: http-amify
+      targetPort: http-alertfy
