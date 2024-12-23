@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  tag: "v0.1.0"
+  tag: ""
   pullPolicy: "IfNotPresent"
 
 # resources:
