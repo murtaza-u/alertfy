@@ -14,7 +14,7 @@ builds:
       - linux
       - windows
       - darwin
-    main: ./cmd/amify
+    main: ./cmd/alertfy
 
 archives:
   - format: tar.gz
